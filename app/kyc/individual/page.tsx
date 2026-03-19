@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useState, ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function IndividualKYC() {
+  const router = useRouter();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
     id_image_front: null,
@@ -24,18 +28,25 @@ export default function IndividualKYC() {
   const submitKyc = async () => {
     setIsSubmitting(true);
     const formData = new FormData();
-    formData.append('client_id', '7'); // Matches your Postman screenshot value
-    formData.append('id_image_front', files.id_image_front!);
-    formData.append('id_image_back', files.id_image_back!);
-    formData.append('profile_picture', files.profile_picture!);
+    
+    const clientId = user?.client_id?.toString() || '7';
+    formData.append('client_id', clientId); 
+    
+    if (files.id_image_front) formData.append('id_image_front', files.id_image_front);
+    if (files.id_image_back) formData.append('id_image_back', files.id_image_back);
+    if (files.profile_picture) formData.append('profile_picture', files.profile_picture);
 
     try {
       const response = await fetch('/api/kyc/upload/individual', {
         method: 'POST',
         body: formData,
       });
-      if (response.ok) alert("✅ Verification submitted!");
-      else alert("❌ Upload failed.");
+
+      if (response.ok) {
+        router.push('/status-tracker');
+      } else {
+        alert("❌ Upload failed.");
+      }
     } catch (err) {
       alert("❌ Server connection error.");
     } finally {
@@ -51,8 +62,8 @@ export default function IndividualKYC() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-[2rem] shadow-xl shadow-sky-100 text-sky-500 mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Verification</h1>
-          <p className="text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-2">Individual Account • 2 min left</p>
+          <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">Verification</h1>
+          <p className="text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-2">Individual Account • Final Step</p>
         </div>
 
         <div className="space-y-4">
@@ -95,27 +106,21 @@ export default function IndividualKYC() {
                 </button>
             </div>
         )}
-
-        <div className="mt-12 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Secure 256-bit Encryption
-          </div>
-        </div>
       </div>
     </div>
   );
 }
 
+// Sub-component with explicit return
 function UploadStep({ label, file, isLocked, onUpload, onRemove, icon }: any) {
   if (isLocked) {
     return (
       <div className="bg-white/60 p-2 rounded-[2.5rem] border border-slate-100 opacity-60">
         <div className="flex items-center p-4">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400 shadow-sm">
+          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 text-left">
             <h3 className="font-black text-slate-400 leading-none">{label}</h3>
             <p className="text-slate-300 text-[9px] font-black uppercase mt-1 italic tracking-widest">Locked</p>
           </div>
@@ -131,7 +136,7 @@ function UploadStep({ label, file, isLocked, onUpload, onRemove, icon }: any) {
           <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-100">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           </div>
-          <div className="ml-4 flex-1">
+          <div className="ml-4 flex-1 text-left">
             <h3 className="font-black text-slate-800 leading-none">{label}</h3>
             <p className="text-emerald-500 text-[10px] font-black uppercase mt-1">Uploaded</p>
           </div>
@@ -144,13 +149,13 @@ function UploadStep({ label, file, isLocked, onUpload, onRemove, icon }: any) {
   }
 
   return (
-    <div className="bg-white p-2 rounded-[2.5rem] shadow-xl shadow-sky-100/50 border-2 border-sky-500 scale-[1.02] transition-all">
+    <div className="bg-white p-2 rounded-[2.5rem] shadow-xl shadow-sky-100/50 border-2 border-sky-500 transition-all">
       <div className="p-4">
         <div className="flex items-center mb-6">
           <div className="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-500">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
           </div>
-          <div className="ml-4">
+          <div className="ml-4 text-left">
             <h3 className="font-black text-slate-800 leading-none text-lg">{label}</h3>
             <p className="text-slate-400 text-[10px] font-black uppercase mt-1">Pending</p>
           </div>
