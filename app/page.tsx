@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import Image from 'next/image';
+import Link from 'next/link'; // Import Link
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 
@@ -9,11 +9,9 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json()).then(res =
 export default function Home() {
   const router = useRouter();
 
-  // 1. FETCH REAL CAMPAIGNS
   const API_URL = 'http://127.0.0.1:8000/apps/imanifund/api/v2/manage/savings-account/';
   const { data: campaigns, isLoading } = useSWR(API_URL, fetcher);
 
-  // Helper for progress calculation
   const calculateProgress = (raised: string, target: string) => {
     const r = parseFloat(raised) || 0;
     const t = parseFloat(target) || 1;
@@ -80,7 +78,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. URGENT CAMPAIGNS (Real Data Integration) */}
+      {/* 3. URGENT CAMPAIGNS */}
       <section className="max-w-7xl mx-auto px-8 py-16">
         <div className="flex justify-between items-end mb-10">
           <div>
@@ -94,7 +92,6 @@ export default function Home() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {isLoading ? (
-            // LOADING SKELETONS
             [1, 2, 3].map((i) => (
               <div key={i} className="bg-white rounded-3xl h-96 animate-pulse border border-slate-100" />
             ))
@@ -102,7 +99,12 @@ export default function Home() {
             const progress = calculateProgress(c.account_balance, c.account_target);
             
             return (
-              <div key={c.id} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 group">
+              /* Wrap the entire card in a Link component */
+              <Link 
+                key={c.id} 
+                href={`/campaign/${c.account_number}`}
+                className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 group cursor-pointer block"
+              >
                 <div className="h-48 bg-slate-200 relative">
                   <img 
                     src={c.campaign_image || "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&q=80&w=400"} 
@@ -146,11 +148,11 @@ export default function Home() {
                     </div>
                   </div>
                   
-                  <button className="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.15em] text-[10px] hover:bg-sky-600 transition transform active:scale-95 shadow-lg shadow-slate-100">
+                  <div className="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.15em] text-center text-[10px] group-hover:bg-sky-600 transition transform active:scale-95 shadow-lg shadow-slate-100">
                     Donate Now
-                  </button>
+                  </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
