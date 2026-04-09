@@ -41,21 +41,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = (newToken: string, profile: UserProfile) => {
-  setToken(newToken);
-  setUser(profile);
-  localStorage.setItem('imani_token', newToken);
-  localStorage.setItem('imani_user', JSON.stringify(profile));
+    setToken(newToken);
+    setUser(profile);
+    
+    // 1. Keep localStorage for fast UI access (Sidebar/Header)
+    localStorage.setItem('imani_token', newToken);
+    localStorage.setItem('imani_user', JSON.stringify(profile));
 
-  // Updated Redirect Logic based on kyc_status
-  if (profile.kyc_status === 'VERIFIED') {
-    router.push(profile.account_type === 'merchant' ? '/dashboard/merchant' : '/dashboard/individual');
-  } else if (profile.kyc_status === 'AWAITING_DOCUMENTS') {
-    router.push(profile.account_type === 'merchant' ? '/kyc/organization' : '/kyc/individual');
-  } else {
-    // Covers AWAITING_ADMIN_VERIFICATION, REJECTED, SUSPENDED
-    router.push('/status-tracker');
-  }
-};
+    // 2. ADD THIS: Set a cookie for the AuthProxy and Django to read
+    // Expires in 7 days, matches your production security needs
+    document.cookie = `auth_token=${newToken}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=strict`;
+
+    // 3. Your existing redirect logic
+    if (profile.kyc_status === 'VERIFIED') {
+      router.push(profile.account_type === 'merchant' ? '/dashboard/merchant' : '/dashboard/individual');
+    } else if (profile.kyc_status === 'AWAITING_DOCUMENTS') {
+      // Corrected paths based on our app structure
+      router.push(profile.account_type === 'merchant' ? '/kyc/institution' : '/kyc/individual');
+    } else {
+      router.push('/status-tracker');
+    }
+  };
 
   const logout = () => {
     localStorage.clear();

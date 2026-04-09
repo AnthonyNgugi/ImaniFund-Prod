@@ -1,23 +1,35 @@
+// app/components/Proxy.tsx
 "use client";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function AuthProxy({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [isVerified, setIsVerified] = useState(false);
+  const [status, setStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
 
   useEffect(() => {
-    // Check for your production auth token in cookies
-    const hasToken = document.cookie.includes('auth_token');
+    const verifyToken = async () => {
+      try {
+        // Call your backend to verify the session
+        const response = await fetch('http://127.0.0.1:8000/apps/imanifund/api/v2/auth/verify'); 
+        
+        if (response.ok) {
+          setStatus('authorized');
+        } else {
+          // Token is expired or invalid
+          setStatus('unauthorized');
+          router.push('/login');
+        }
+      } catch (error) {
+        setStatus('unauthorized');
+        router.push('/login');
+      }
+    };
 
-    if (!hasToken) {
-      router.push('/login'); // Redirect to your top-level login
-    } else {
-      setIsVerified(true);
-    }
+    verifyToken();
   }, [router]);
 
-  if (!isVerified) {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-sky-100 border-t-sky-600 rounded-full animate-spin"></div>
@@ -25,5 +37,5 @@ export default function AuthProxy({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return status === 'authorized' ? <>{children}</> : null;
 }
