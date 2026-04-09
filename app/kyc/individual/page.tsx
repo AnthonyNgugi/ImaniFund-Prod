@@ -1,5 +1,6 @@
 'use client';
 
+import AuthProxy from '@/app/components/Proxy';
 import React, { useState, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -55,6 +56,7 @@ export default function IndividualKYC() {
   };
 
   return (
+    <AuthProxy>
     <div className="min-h-screen bg-slate-50 flex justify-center py-12 px-4 font-sans text-slate-900">
       <div className="max-w-md w-full">
         
@@ -108,6 +110,7 @@ export default function IndividualKYC() {
         )}
       </div>
     </div>
+    </AuthProxy>
   );
 }
 
