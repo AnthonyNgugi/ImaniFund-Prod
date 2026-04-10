@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function NewIndividualCampaign() {
-  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
+  const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://127.0.0.1:8000';
   const router = useRouter();
   
   // 1. STATE MANAGEMENT

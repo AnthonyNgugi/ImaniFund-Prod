@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const response = await fetch(`${process.env.DJANGO_API_URL}/auth/individual/kyc/`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_DJANGO_API_URL}/auth/individual/kyc/`, {
       method: 'POST',
       body: djangoPayload,
     });

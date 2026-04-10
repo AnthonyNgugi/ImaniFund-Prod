@@ -8,7 +8,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json()).then(res =
 
 export default function Home() {
   const router = useRouter();
-  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
+  const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://127.0.0.1:8000';
 
   const API_URL = `${baseUrl}/manage/savings-account/`;
   const { data: campaigns, isLoading } = useSWR(API_URL, fetcher);

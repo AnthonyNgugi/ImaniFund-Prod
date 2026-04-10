@@ -8,7 +8,7 @@ export default function CampaignPage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
+  const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     fetch(`${baseUrl}/manage/savings-account-public/?a_number=${accountNumber}`)
