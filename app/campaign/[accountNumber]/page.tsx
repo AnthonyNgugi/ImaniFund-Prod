@@ -8,8 +8,10 @@ export default function CampaignPage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
+
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/apps/imanifund/api/v2/manage/savings-account-public/?a_number=${accountNumber}`)
+    fetch(`${baseUrl}/manage/savings-account-public/?a_number=${accountNumber}`)
       .then(res => res.json())
       .then(json => {
         if (json.status) {

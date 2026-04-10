@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { User, Building2, Check, ArrowLeft, Smartphone, Loader2, AlertCircle, MapPin, Mail } from "lucide-react";
 import { requestOtpAction, registerAction } from "./actions";
+const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
@@ -50,8 +51,8 @@ export default function RegisterPage() {
     const loadInit = async () => {
       try {
         const [mTypeRes, regionRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/apps/imanifund/api/v2/manage/merchant-type/"),
-          fetch("http://127.0.0.1:8000/apps/imanifund/api/v2/manage/country-regions/")
+          fetch(`${baseUrl}/manage/merchant-type/`),
+          fetch(`${baseUrl}/manage/country-regions/`)
         ]);
         const mTypeData = await mTypeRes.json();
         const regionData = await regionRes.json();
@@ -67,7 +68,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (formData.region_id) {
-      fetch(`http://127.0.0.1:8000/apps/imanifund/api/v2/manage/country-sub-region/?country_region_id=${formData.region_id}`)
+      fetch(`${baseUrl}/manage/country-sub-region/?country_region_id=${formData.region_id}`)
         .then(res => res.json())
         .then(data => setLookups(prev => ({ ...prev, sub_region: data.sub_region || [] })));
     }
@@ -75,7 +76,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (formData.merchant_type_id) {
-      fetch(`http://127.0.0.1:8000/apps/imanifund/api/v2/manage/merchant-type-categories/?merchant_type_id=${formData.merchant_type_id}`)
+      fetch(`${baseUrl}/manage/merchant-type-categories/?merchant_type_id=${formData.merchant_type_id}`)
         .then(res => res.json())
         .then(data => setLookups(prev => ({ ...prev, merchant_type_category: data.merchant_type_category || [] })));
     }

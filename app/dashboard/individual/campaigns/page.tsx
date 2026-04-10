@@ -6,11 +6,13 @@ import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json()).then(res => res.data || []);
 
+const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
+
 export default function IndividualCampaignsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'active' | 'closed'>('active');
 
-  const API_URL = 'http://127.0.0.1:8000/apps/imanifund/api/v2/manage/savings-account/';
+  const API_URL = `${baseUrl}/manage/savings-account/`;
   const { data: campaigns, isLoading } = useSWR(API_URL, fetcher);
 
   // Helper to calculate days remaining

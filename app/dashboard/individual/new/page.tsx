@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function NewIndividualCampaign() {
+  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
   const router = useRouter();
   
   // 1. STATE MANAGEMENT
@@ -29,8 +30,8 @@ export default function NewIndividualCampaign() {
     const fetchMetadata = async () => {
       try {
         const [catRes, linkRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/apps/imanifund/api/v2/manage/account-type/'),
-          fetch('http://127.0.0.1:8000/apps/imanifund/api/v2/manage/external-link-type/')
+          fetch(`${baseUrl}/manage/account-type/`),
+          fetch(`${baseUrl}/manage/external-link-type/`)
         ]);
         
         if (catRes.ok) {
@@ -84,7 +85,7 @@ export default function NewIndividualCampaign() {
     selectedImages.forEach((file) => data.append('pictures', file));
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/apps/imanifund/api/v2/manage/savings-account/', {
+      const response = await fetch(`${baseUrl}/manage/savings-account/`, {
         method: 'POST',
         body: data,
       });

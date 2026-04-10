@@ -6,12 +6,13 @@ import { useEffect, useState } from 'react';
 export default function AuthProxy({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [status, setStatus] = useState<'loading' | 'authorized' | 'unauthorized'>('loading');
+  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const verifyToken = async () => {
       try {
         // Call your backend to verify the session
-        const response = await fetch('http://127.0.0.1:8000/apps/imanifund/api/v2/auth/verify'); 
+        const response = await fetch(`${baseUrl}/auth/verify`); 
         
         if (response.ok) {
           setStatus('authorized');

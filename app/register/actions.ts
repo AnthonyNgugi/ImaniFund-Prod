@@ -70,13 +70,14 @@ interface ServerActionResponse {
   message: string;
   data?: any;
 }
+const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
 
 export async function requestOtpAction(
   mobile_number: string, 
   user_type: string
 ): Promise<ServerActionResponse> {
   try {
-    const response = await fetch("http://127.0.0.1:8000/apps/imanifund/api/v2/auth/register/send/otp/", {
+    const response = await fetch(`${baseUrl}/auth/register/send/otp/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mobile_number, user_type }),
@@ -106,8 +107,8 @@ export async function registerAction(
     };
 
     const endpoint = persona === "individual" 
-      ? "http://127.0.0.1:8000/apps/imanifund/api/v2/auth/onboarding/individual/" 
-      : "http://127.0.0.1:8000/apps/imanifund/api/v2/auth/onboarding/institution/";
+      ? `${baseUrl}/auth/onboarding/individual/` 
+      : `${baseUrl}/auth/onboarding/institution/`;
 
     const response = await fetch(endpoint, {
       method: "POST",

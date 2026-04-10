@@ -16,7 +16,7 @@ export default function LoginPage() {
     otp: ''
   });
 
-  const baseUrl = "http://127.0.0.1:8000/apps/imanifund/api/v2/auth";
+  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
 
   const handleInitialLogin = async (e: React.FormEvent) => {
     e.preventDefault();

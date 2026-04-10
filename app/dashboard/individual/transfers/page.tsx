@@ -4,13 +4,14 @@ import useSWR from 'swr';
 import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
 
 export default function TransfersPage() {
   const [selectedChannel, setSelectedChannel] = useState('mpesa');
   const [amount, setAmount] = useState('');
 
   // 1. Fetching real-time stats (Balance & History)
-  const API_URL = 'http://127.0.0.1:8000/apps/imanifund/api/v2/auth/stats';
+  const API_URL = `${baseUrl}/auth/stats`;
   const { data, isLoading } = useSWR(API_URL, fetcher);
 
   const balance = data?.stats?.available_payout || 124000.50;
