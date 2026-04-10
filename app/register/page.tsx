@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { User, Building2, Check, ArrowLeft, Smartphone, Loader2, AlertCircle, MapPin, Mail } from "lucide-react";
 import { requestOtpAction, registerAction } from "./actions";
-const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://127.0.0.1:8000';
+const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL;
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);

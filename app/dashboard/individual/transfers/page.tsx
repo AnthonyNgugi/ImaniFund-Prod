@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
-const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://127.0.0.1:8000';
+const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL;
 
 export default function TransfersPage() {
   const [selectedChannel, setSelectedChannel] = useState('mpesa');

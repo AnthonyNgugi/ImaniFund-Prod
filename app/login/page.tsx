@@ -16,7 +16,7 @@ export default function LoginPage() {
     otp: ''
   });
 
-  const baseUrl = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000';
+  const baseUrl = process.env.DJANGO_API_URL;
 
   const handleInitialLogin = async (e: React.FormEvent) => {
     e.preventDefault();

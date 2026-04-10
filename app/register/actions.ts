@@ -70,7 +70,7 @@ interface ServerActionResponse {
   message: string;
   data?: any;
 }
-const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://127.0.0.1:8000';
+const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL;
 
 export async function requestOtpAction(
   mobile_number: string, 

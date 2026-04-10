@@ -5,6 +5,9 @@ import Link from 'next/link'; // Added Link import
 import { useAuth } from '@/context/AuthContext';
 
 // 1. Simplified Fetcher (No token requirement for now)
+
+const baseUrl = process.env.NEXT_PUBLIC_DJANGO_API_URL;
+
 const fetcher = (url: string) => fetch(url).then((res) => {
   if (!res.ok) throw new Error("Fetch failed");
   return res.json();
@@ -14,7 +17,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   
   // Using SWR but allowing development without a live token
-  const API_URL = 'http://127.0.0.1:8000/apps/imanifund/api/v2/auth/stats';
+  const API_URL = `${baseUrl}/auth/stats`;
   const { data, isLoading } = useSWR(API_URL, fetcher, {
     revalidateOnFocus: false, // Prevents constant refreshing during dev
     shouldRetryOnError: false
